@@ -1,7 +1,7 @@
-import mysql from "mysql2";
+import mysql from 'mysql2';
 
 class DB {
-  constructor({ host, user, password, database }) {
+  constructor({host, user, password, database}){
     this.pool = mysql.createPool({
       host,
       user,
@@ -11,18 +11,22 @@ class DB {
       connectionLimit: 10,
       maxIdle: 10,
       idleTimeout: 60000,
-      queueLimit: 0,
+      queueLimit: 0
     });
     this.promisePool = this.pool.promise();
   }
 
-  async insertTemperature({ device_id, temperature, created_at }) {
-    // 온도 insert 코드 작성
+  async insertData({device_id, temperature, humidity, created_at}){
+    const sql = `INSERT INTO device_data (device_id, temperature, humidity, created_at) values (?,?,?,?);`;
+    const [rows] = await this.promisePool.query(sql,[device_id, temperature, humidity, created_at]);
+    return rows;
   }
 
-  async insertHumidity({ device_id, humidity, created_at }) {
-    // 습도 insert 코드 작성
+  async getLatestData(){
+    const sql = `SELECT * FROM device_data WHERE idx IN(SELECT MAX(idx) idx FROM device_data GROUP BY device_id);`;
+    const [rows] = await this.promisePool.query(sql);
+    return rows;
   }
 }
 
-export default DB;
+export default DB

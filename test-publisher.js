@@ -12,19 +12,21 @@ const client = mqtt.connect(mqttOptions);
 client.on('connect', (connack) => {
   console.log('## test publisher connected')
 
+  client.subscribe('cmd/tttt/pump');
+
   setInterval(()=>{
     console.log("## published")
-    client.publish('data/202303AIOTM1/temperature', JSON.stringify({
-      device_id: 1,
-      temperature: 20, 
-      timestamp: Date.now(),
-    }));
-
-    client.publish('data/202303AIOTM1/humidity', JSON.stringify({
-      device_id: 1,
-      humidity: 20, 
+    const device_id = Math.round(Math.random() * 5)
+    client.publish('dt/202303AIOTM1/temperature', JSON.stringify({
+      device_id: device_id===0?1:device_id,
+      humidity: Math.round(Math.random() * 100), 
+      temperature: Math.round(Math.random() * 100), 
       timestamp: Date.now(),
     }));
   }, 1000)
 });
 
+client.on('message', (topic, message)=>{
+  console.log(topic, JSON.parse(message.toString('utf-8')))
+
+})

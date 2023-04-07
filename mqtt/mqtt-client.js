@@ -12,7 +12,7 @@ class MqttClient {
 
   connect(){
     const self = this;
-    self.#client = mqtt.connect(self.#options);    
+    self.#client = mqtt.connect(self.#options);
     
     self.#client.on('connect', () => {
       console.log('## connected');
@@ -29,6 +29,10 @@ class MqttClient {
     self.#client.on('error', (error) => {
       console.log(error);
     });
+  }
+
+  sendCommand(topic, message){
+    this.#client.publish(topic, JSON.stringify(message));
   }
 
   setMessageCallback(cb){
