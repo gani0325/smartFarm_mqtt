@@ -23,9 +23,7 @@ class DB {
   }
 
   async getLatestData(){
-    const sql = `SELECT * FROM device_data WHERE idx IN(SELECT MAX(idx) idx FROM device_data GROUP BY device_id);`;
-    const [rows] = await this.promisePool.query(sql);
-    return rows;
+    // 데이터 조회 
   }
 }
 
