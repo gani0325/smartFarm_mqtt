@@ -59,7 +59,8 @@ app.use(express.json());
 app.use(express.static('front-project/public'));
 app.use("/api", api.getRouter());
 app.get('*', (req, res) => {
-  res.sendFile('front-project/public/index.html', { root: __dirname});
+  // sendFile 추가
+  res.sendFile('front-project/public/index.html', {root: __dirname});
 });
 
 

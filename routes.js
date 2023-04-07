@@ -36,8 +36,8 @@ const init = (db, mqttClient) => {
 
     const device = await db.getOneDevice(device_id);
 
-    await mqttClient.sendCommand(`cmd/${device.serial_num}/pump`, {
-      serial_num: device.serial_num,
+    await mqttClient.sendCommand(`cmd/${device[0].serial_num}/pump`, {
+      serial_num: device[0].serial_num,
       command,
     })
 
