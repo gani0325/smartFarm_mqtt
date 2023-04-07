@@ -16,9 +16,9 @@ client.on('connect', (connack) => {
 
   setInterval(()=>{
     console.log("## published")
-    const device_id = Math.round(Math.random() * 5)
-    client.publish('dt/202303AIOTM1/temperature', JSON.stringify({
-      device_id: device_id===0?1:device_id,
+    // const device_id = Math.round(Math.random() * 5)
+    client.publish('dt/test-01', JSON.stringify({
+      device_id: 1,
       humidity: Math.round(Math.random() * 100), 
       temperature: Math.round(Math.random() * 100), 
       timestamp: Date.now(),

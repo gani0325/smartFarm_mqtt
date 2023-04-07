@@ -17,13 +17,34 @@ class DB {
   }
 
   async insertData({device_id, temperature, humidity, created_at}){
-    const sql = `INSERT INTO device_data (device_id, temperature, humidity, created_at) values (?,?,?,?);`;
-    const [rows] = await this.promisePool.query(sql,[device_id, temperature, humidity, created_at]);
+    const sql = `INSERT INTO device_data (device_id, temperature, humidity) values (?,?,?);`;
+    const [rows] = await this.promisePool.query(sql,[device_id, temperature, humidity]);
     return rows;
   }
 
   async getLatestData(){
-    // 데이터 조회 
+    // 데이터 조회
+    const sql = `SELECT * FROM device_data WHERE idx IN(SELECT MAX(idx) idx FROM device_data GROUP BY device_id);`;
+    const [rows] = await this.promisePool.query(sql);
+    return rows;
+  }
+
+  async getDevices(){
+    const sql = `SELECT * FROM device;`;
+    const [rows] = await this.promisePool.query(sql);
+    return rows;
+  }
+
+  async getOneDevice(device_id){
+    const sql = `SELECT * FROM device where device_id=?;`;
+    const [rows] = await this.promisePool.query(sql, [device_id]);
+    return rows;
+  }
+
+  async getData(device_id, start, end){
+    const sql = `SELECT * FROM device_data WHERE device_id=? and (created_at BETWEEN ? AND ?);`
+    const [rows] = await this.promisePool.query(sql, [device_id, start, end]);
+    return rows;
   }
 }
 

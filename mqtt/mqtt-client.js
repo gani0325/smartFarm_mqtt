@@ -32,6 +32,7 @@ class MqttClient {
   }
 
   sendCommand(topic, message){
+    // publish
     this.#client.publish(topic, JSON.stringify(message));
   }
 
