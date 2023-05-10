@@ -36,6 +36,15 @@ mqttClient.setMessageCallback(async (topic, message) => {
       case "dt":
         db.insertData({
           device_id: messageJson.device_id,
+          plantName: messageJson.plantName,
+          plantNickName: messageJson.plantNickName,
+          eated_at: messageJson.eated_at,
+          desc: messageJson.desc,
+          potDiameter: messageJson.potDiameter,
+          potHeight: messageJson.potHeight,
+          plantDiameter: messageJson.plantDiameter,
+          plantHeight: messageJson.plantHeight,
+          region: messageJson.region,
           temperature: messageJson.temperature,
           humid: messageJson.humid,
           soil: messageJson.soil,
