@@ -16,10 +16,34 @@ class DB {
     this.promisePool = this.pool.promise();
   }
 
-  async insertData({ device_id, temperature, humidity, created_at }) {
-    const sql = `INSERT INTO device_data (device_id, temperature, humid, soil) values (?,?,?,?);`;
+  // data insert
+  async insertData({
+    device_id,
+    plantName,
+    plantNickName,
+    created_at,
+    desc,
+    potDiameter,
+    potHeight,
+    plantDiameter,
+    plantHeight,
+    region,
+    temperature,
+    humid,
+    soill,
+  }) {
+    const sql = `INSERT INTO device_data (device_id, plantName, plantNickName, created_at, desc, potDiameter, potHeight, plantDiameter, plantHeight, region, temperature, humid, soil) values (?,?,?,?);`;
     const [rows] = await this.promisePool.query(sql, [
       device_id,
+      plantName,
+      plantNickName,
+      created_at,
+      desc,
+      potDiameter,
+      potHeight,
+      plantDiameter,
+      plantHeight,
+      region,
       temperature,
       humid,
       soil,
