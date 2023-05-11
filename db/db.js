@@ -1,10 +1,10 @@
 import mysql from "mysql2";
 
 class DB {
-  constructor({ host, port, user, password, database }) {
+  constructor({ host, post, user, password, database }) {
     this.pool = mysql.createPool({
       host,
-      port,
+      post,
       user,
       password,
       database,
@@ -23,7 +23,7 @@ class DB {
     plantName,
     plantNickName,
     created_at,
-    desc,
+    memo,
     potDiameter,
     potHeight,
     plantDiameter,
@@ -33,13 +33,13 @@ class DB {
     humid,
     soil,
   }) {
-    const sql = `INSERT INTO device_data (device_id, plantName, plantNickName, created_at, desc, potDiameter, potHeight, plantDiameter, plantHeight, region, temperature, humid, soil) values (?,?,?,?,?,?,?,?,?,?,?,?,?);`;
+    const sql = `INSERT INTO device_data (device_id, plantName, plantNickName, created_at, memo, potDiameter, potHeight, plantDiameter, plantHeight, region, temperature, humid, soil) values (?,?,?,?,?,?,?,?,?,?,?,?,?);`;
     const [rows] = await this.promisePool.query(sql, [
       device_id,
       plantName,
       plantNickName,
       created_at,
-      desc,
+      memo,
       potDiameter,
       potHeight,
       plantDiameter,

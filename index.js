@@ -9,13 +9,12 @@ const PORT = 3000;
 const TOPIC_TYPE_INDEX = 0;
 const db = new DB({
   // db 연결 정보 추가
-  host: "localhost",
-  port: 3306,
+  host: "3.39.194.9",
   user: "root",
+  post: 3306,
   password: "gani",
   database: "simple_iot",
 });
-
 const mqttOptions = {
   // mqtt option 설정
   host: "3.39.194.9",
@@ -40,7 +39,7 @@ mqttClient.setMessageCallback(async (topic, message) => {
           plantName: messageJson.plantName,
           plantNickName: messageJson.plantNickName,
           created_at: new Date(messageJson.timestamp),
-          desc: messageJson.desc,
+          memo: messageJson.memo,
           potDiameter: messageJson.potDiameter,
           potHeight: messageJson.potHeight,
           plantDiameter: messageJson.plantDiameter,
@@ -57,6 +56,7 @@ mqttClient.setMessageCallback(async (topic, message) => {
     }
   } catch {
     console.log(error);
+    console.log("hihi");
   }
 });
 

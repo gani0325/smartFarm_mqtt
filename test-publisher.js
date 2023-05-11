@@ -8,21 +8,19 @@ const mqttOptions = {
 };
 
 const client = mqtt.connect(mqttOptions);
-// console.log(client);
-
 client.on("connect", (connack) => {
   console.log("## test publisher connected");
 
   setInterval(() => {
     console.log("## published");
     client.publish(
-      "dt/test-01",
+      "dt/test-04",
       JSON.stringify({
-        device_id: 1,
+        device_id: 2,
         plantName: "강낭콩",
         plantNickName: "귀요미",
-        created_at: Date.now(),
-        desc: "콩이용",
+        timestamp: Date.now(),
+        memo: "콩이용",
         potDiameter: 10,
         potHeight: 10,
         plantDiameter: 5,
