@@ -9,16 +9,17 @@ const PORT = 3000;
 const TOPIC_TYPE_INDEX = 0;
 const db = new DB({
   // db 연결 정보 추가
-  host: process.env.HOST,
-  user: process.env.USERNAME,
-  password: process.env.PASSWORD,
-  database: process.env.DATABASE,
+  host: "localhost",
+  port: 3306,
+  user: "root",
+  password: "gani",
+  database: "simple_iot",
 });
 
 const mqttOptions = {
   // mqtt option 설정
-  host: process.env.MQTT_BROKER_HOST,
-  port: process.env.MQTT_BROKER_PORT,
+  host: "3.39.194.9",
+  port: 1883,
 };
 
 const mqttClient = new MqttClient(mqttOptions, ["dt/#"]); // 구독할 토픽 추가
@@ -38,7 +39,7 @@ mqttClient.setMessageCallback(async (topic, message) => {
           device_id: messageJson.device_id,
           plantName: messageJson.plantName,
           plantNickName: messageJson.plantNickName,
-          eated_at: messageJson.eated_at,
+          created_at: new Date(messageJson.timestamp),
           desc: messageJson.desc,
           potDiameter: messageJson.potDiameter,
           potHeight: messageJson.potHeight,
