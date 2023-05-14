@@ -33,6 +33,11 @@ class MqttClient {
     });
   }
 
+  // MQTT 메시지 발행
+  sendCommand(topic, message) {
+    this.#client.publish(topic, JSON.stringify(message));
+  }
+
   // 메시지 이벤트 콜백 설정 메소드
   setMessageCallback(cb) {
     this.#client.on("message", cb);
