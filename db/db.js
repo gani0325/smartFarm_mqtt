@@ -73,6 +73,13 @@ class DB {
     const [rows] = await this.promisePool.query(sql, [device_id]);
     return rows;
   }
+
+  async getData(device_id, start, end) {
+    // 5) 히스토리 데이터 조회
+    const sql = `SELECT * FROM device_data WHERE device_id=? and (created_at BETWEEN ? AND ?);`;
+    const [rows] = await this.promisePool.query(sql, [device_id, start, end]);
+    return rows;
+  }
 }
 
 export default DB;
