@@ -1,23 +1,33 @@
 import dotenv from "dotenv";
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import MqttClient from "./mqtt/mqtt-client.js";
 import DB from "./db/db.js";
+import api from "./routes.js";
+import cors from "cors";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PORT = 3000;
+const TOPIC_TYPE_INDEX = 0;
 
 dotenv.config();
 const app = express();
-const PORT = 3000;
-const TOPIC_TYPE_INDEX = 0;
+app.use(cors());
+
 const db = new DB({
   // db 연결 정보 추가
-  host: "3.39.194.9",
+  host: "52.79.210.192",
   user: "root",
   post: 3306,
-  password: "gani",
-  database: "simple_iot",
+  password: "Admin1234~",
+  database: "smartFarm",
 });
+
 const mqttOptions = {
   // mqtt option 설정
-  host: "3.39.194.9",
+  host: "52.79.210.192",
   port: 1883,
 };
 
@@ -26,7 +36,6 @@ mqttClient.connect();
 
 mqttClient.setMessageCallback(async (topic, message) => {
   // 메시지 이벤트 콜백 설정
-  console.log(topic, message.toString());
   const topicType = topic.split("/")[TOPIC_TYPE_INDEX];
   const messageJson = JSON.parse(message);
 
@@ -59,6 +68,10 @@ mqttClient.setMessageCallback(async (topic, message) => {
     console.log("hihi");
   }
 });
+
+api.init(db, mqttClient);
+app.use(express.json());
+app.use("/api", api.getRouter());
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
