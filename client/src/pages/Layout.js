@@ -3,12 +3,13 @@ import { Link, Outlet } from "react-router-dom";
 import { ListItemButton } from "@mui/material";
 import { ListItemIcon } from "@mui/material";
 import { ListItemText } from "@mui/material";
-import { DashboardIcon } from "@mui/icons-material";
-import { BarChartIcon } from "@mui/icons-material";
-import { DevicesIcon } from "@mui/icons-material";
+import { default as DashboardIcon } from "@mui/icons-material/Dashboard";
+import { default as BarChartIcon } from "@mui/icons-material/BarChart";
+import { default as DevicesIcon } from "@mui/icons-material/Devices";
 import Box from "@mui/material/Box";
 import { List } from "@mui/material";
 import { Container } from "@mui/material";
+
 const Layout = () => {
   return (
     <>
