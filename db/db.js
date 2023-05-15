@@ -20,7 +20,6 @@ class DB {
 
   // 1) 식물 데이터 넣기
   async insertData({
-    device_id,
     plantName,
     plantNickName,
     created_at,
@@ -34,12 +33,64 @@ class DB {
     humid,
     soil,
   }) {
-    const sql = `INSERT INTO device_data (device_id, plantName, plantNickName, created_at, memo, potDiameter, potHeight, plantDiameter, plantHeight, region, temperature, humid, soil) values (?,?,?,?,?,?,?,?,?,?,?,?,?);`;
+    // device_id 를 realtime table 에서 가져옴
+    const getDeviceSQL = `SELECT device_id FROM realtime ORDER BY created_at desc LIMIT 1;`;
+    const [deviceId] = await this.promisePool.query(getDeviceSQL);
+    const device_id = deviceId[0];
+
+    if (!device_id || device_id === "") {
+      return Error("디바이스를 연결해주세요");
+    } else {
+      const sql = `INSERT INTO device_data (device_id, plantName, plantNickName, created_at, memo, potDiameter, potHeight, plantDiameter, plantHeight, region, temperature, humid, soil) values (?,?,?,?,?,?,?,?,?,?,?,?,?);`;
+      const [rows] = await this.promisePool.query(sql, [
+        device_id,
+        plantName,
+        plantNickName,
+        created_at,
+        memo,
+        potDiameter,
+        potHeight,
+        plantDiameter,
+        plantHeight,
+        region,
+        temperature,
+        humid,
+        soil,
+      ]);
+      return rows;
+    }
+  }
+  // 2) 모든 디바이스 리스트 조회
+  async getDevices() {
+    const sql = `SELECT device_id FROM device_data;`;
+    const [rows] = await this.promisePool.query(sql);
+    return rows;
+  }
+  // 3) 한 개 디바이스 정보 조회
+  async getOneDevice(device_id) {
+    const sql = `SELECT * FROM device_data WHERE device_id=?;`;
+    const [rows] = await this.promisePool.query(sql, [device_id]);
+    return rows;
+  }
+  // 4) 한 개 디바이스 정보 수정
+  async putOneDevice(
+    plantName,
+    plantNickName,
+    memo,
+    potDiameter,
+    potHeight,
+    plantDiameter,
+    plantHeight,
+    region,
+    temperature,
+    humid,
+    soil,
+    device_id
+  ) {
+    const sql = `UPDATE device_data set plantName=?, plantNickName=?, memo=?, potDiameter=?, potHeight=?, plantDiameter=?, plantHeight=?, region=?, temperature=?, humid=? WHERE device_id=?;`;
     const [rows] = await this.promisePool.query(sql, [
-      device_id,
       plantName,
       plantNickName,
-      created_at,
       memo,
       potDiameter,
       potHeight,
@@ -49,35 +100,14 @@ class DB {
       temperature,
       humid,
       soil,
+      device_id,
     ]);
     return rows;
   }
-
-  async getLatestData() {
-    // 2) 실시간 데이터 조회
-    const sql = `SELECT * FROM device_data WHERE idx IN(SELECT MAX(idx) idx FROM device_data);`;
-    const [rows] = await this.promisePool.query(sql);
-    return rows;
-  }
-
-  async getDevices() {
-    // 3) 디바이스 리스트 조회
-    const sql = `SELECT device_id FROM device_data;`;
-    const [rows] = await this.promisePool.query(sql);
-    return rows;
-  }
-
-  async getOneDevice(device_id) {
-    // 4) 디바이스 정보 조회
-    const sql = `SELECT * FROM device_data WHERE device_id=?;`;
+  // 5) 한 개 디바이스 정보 삭제
+  async deleteOneDevice(device_id) {
+    const sql = `DELETE device_data WHERE device_id=?;`;
     const [rows] = await this.promisePool.query(sql, [device_id]);
-    return rows;
-  }
-
-  async getData(device_id, start, end) {
-    // 5) 히스토리 데이터 조회
-    const sql = `SELECT * FROM device_data WHERE device_id=? and (created_at BETWEEN ? AND ?);`;
-    const [rows] = await this.promisePool.query(sql, [device_id, start, end]);
     return rows;
   }
 }

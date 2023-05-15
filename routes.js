@@ -3,58 +3,109 @@ import express from "express";
 const router = express.Router();
 
 const init = (db, mqttClient) => {
-  router.get("/data/realtime", async (req, res) => {
-    // 실시간 데이터 조회
-    res.send(await db.getLatestData());
+  // 1) 모든 디바이스 리스트 조회
+  router.get("data/devices", async (req, res) => {
+    res.send(await db.getDevices());
   });
 
-  router.get("/data/devices/:device_id", async (req, res) => {
+  // 2) 한 개 디바이스 정보 조회
+  router.get("data/devices/:device_id", async (req, res) => {
     const { device_id } = req.params;
-    const { start, end } = req.query;
-
-    if (!device_id || device_id === "") {
-      res.status(400).send({ error: "device_id error" });
-    }
-    // 히스토리 데이터 조회
-    res.send(await db.getData(device_id, start, end));
-  });
-
-  router.post("/cmd/devices/:device_id", async (req, res) => {
-    const { device_id } = req.params;
-    const { command } = req.body;
-
-    console.log(device_id, command);
+    console.log(device_id);
 
     if (!device_id || device_id === "") {
       res.status(400).send({ error: "device_id empty error" });
     }
-    if (command !== "run" && command !== "stop") {
-      res.status(400).send({ error: "command value error" });
+
+    const devices = await db.getOneDevice(device_id);
+    res.send(await devices);
+  });
+
+  // 3) 한 개 디바이스 정보 생성
+  router.post("data/devices/register", async (req, res) => {
+    const {
+      plantName,
+      plantNickName,
+      created_at,
+      memo,
+      potDiameter,
+      potHeight,
+      plantDiameter,
+      plantHeight,
+      region,
+      temperature,
+      humid,
+      soil,
+    } = req.body;
+
+    const devices = await db.insertData(
+      plantName,
+      plantNickName,
+      created_at,
+      memo,
+      potDiameter,
+      potHeight,
+      plantDiameter,
+      plantHeight,
+      region,
+      temperature,
+      humid,
+      soil
+    );
+    res.send(await devices);
+  });
+  // 4) 한 개 디바이스 정보 수정
+  router.put("data/devices/:device_id", async (req, res) => {
+    const { device_id } = req.params;
+    const {
+      plantName,
+      plantNickName,
+      memo,
+      potDiameter,
+      potHeight,
+      plantDiameter,
+      plantHeight,
+      region,
+      temperature,
+      humid,
+      soil,
+    } = req.body;
+    console.log(device_id);
+
+    if (!device_id || device_id === "") {
+      res.status(400).send({ error: "device_id empty error" });
     }
 
-    // 디바이스 정보 조회
-    const device = await db.getOneDevice(device_id);
-
-    // 명령 메시지 발행
-    await mqttClient.sendCommand(`cmd/${device.serial_num}/pump`, {
-      serial_num: device.serial_num,
-      command,
-    });
-
-    res.send(true);
+    const devices = await db.putOneDevice(
+      plantName,
+      plantNickName,
+      memo,
+      potDiameter,
+      potHeight,
+      plantDiameter,
+      plantHeight,
+      region,
+      temperature,
+      humid,
+      soil,
+      device_id
+    );
+    res.send(await devices);
   });
+  // 5) 한 개 디바이스 정보 삭제
+  router.delete("data/devices/:device_id", async (req, res) => {
+    const { device_id } = req.params;
+    console.log(device_id);
 
-  router.get("/devices", async (req, res) => {
-    // 디바이스 리스트 조회
-    res.send(await db.getDevices());
+    if (!device_id || device_id === "") {
+      res.status(400).send({ error: "device_id empty error" });
+    }
+
+    const devices = await db.deleteOneDevice(device_id);
+    res.send(await devices);
   });
-};
-
-const getRouter = () => {
-  return router;
 };
 
 export default {
   init,
-  getRouter,
 };
