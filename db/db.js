@@ -22,7 +22,6 @@ class DB {
   async insertData({
     plantName,
     plantNickName,
-    created_at,
     memo,
     potDiameter,
     potHeight,
@@ -46,7 +45,7 @@ class DB {
         device_id,
         plantName,
         plantNickName,
-        created_at,
+        DEFAULT,
         memo,
         potDiameter,
         potHeight,
@@ -60,12 +59,20 @@ class DB {
       return rows;
     }
   }
+  async getDeviceId() {
+    const getDeviceSQL = `SELECT device_id FROM realtime ORDER BY created_at desc LIMIT 1;`;
+    const [deviceId] = await this.promisePool.query(getDeviceSQL);
+    const device_id = deviceId[0];
+    return device_id;
+  }
+
   // 2) 모든 디바이스 리스트 조회
   async getDevices() {
-    const sql = `SELECT device_id FROM device_data;`;
+    const sql = `SELECT plantName, plantNickName FROM device_data;`;
     const [rows] = await this.promisePool.query(sql);
     return rows;
   }
+
   // 3) 한 개 디바이스 정보 조회
   async getOneDevice(device_id) {
     const sql = `SELECT * FROM device_data WHERE device_id=?;`;
