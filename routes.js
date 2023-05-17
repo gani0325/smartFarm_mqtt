@@ -4,12 +4,12 @@ const router = express.Router();
 
 const init = (db, mqttClient) => {
   // 1) 모든 디바이스 리스트 조회
-  router.get("data/devices", async (req, res) => {
+  router.get("/devices", async (req, res) => {
     res.send(await db.getDevices());
   });
 
   // 2) 한 개 디바이스 정보 조회
-  router.get("data/devices/:device_id", async (req, res) => {
+  router.get("/devices/:device_id", async (req, res) => {
     const { device_id } = req.params;
     console.log(device_id);
 
@@ -22,11 +22,10 @@ const init = (db, mqttClient) => {
   });
 
   // 3) 한 개 디바이스 정보 생성
-  router.post("data/devices/register", async (req, res) => {
+  router.post("/devices/register", async (req, res) => {
     const {
       plantName,
       plantNickName,
-      created_at,
       memo,
       potDiameter,
       potHeight,
@@ -41,7 +40,6 @@ const init = (db, mqttClient) => {
     const devices = await db.insertData(
       plantName,
       plantNickName,
-      created_at,
       memo,
       potDiameter,
       potHeight,
@@ -52,10 +50,13 @@ const init = (db, mqttClient) => {
       humid,
       soil
     );
-    res.send(await devices);
+    const deivce_id = await db.getDeviceId();
+
+    res.send(await devices, deivce_id);
   });
+
   // 4) 한 개 디바이스 정보 수정
-  router.put("data/devices/:device_id", async (req, res) => {
+  router.put("/devices/:device_id", async (req, res) => {
     const { device_id } = req.params;
     const {
       plantName,
@@ -90,10 +91,11 @@ const init = (db, mqttClient) => {
       soil,
       device_id
     );
+
     res.send(await devices);
   });
   // 5) 한 개 디바이스 정보 삭제
-  router.delete("data/devices/:device_id", async (req, res) => {
+  router.delete("/devices/:device_id", async (req, res) => {
     const { device_id } = req.params;
     console.log(device_id);
 
