@@ -1,7 +1,8 @@
 import mqtt from "mqtt";
 
 const options = {
-  host: "43.201.9.169",
+  // mqtt option 설정
+  host: "52.79.210.192",
   port: 1883,
 };
 const client = mqtt.connect(options);

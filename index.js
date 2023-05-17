@@ -65,7 +65,6 @@ mqttClient.setMessageCallback(async (topic, message) => {
     }
   } catch {
     console.log(error);
-    console.log("hihi");
   }
 });
 
